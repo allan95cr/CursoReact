@@ -1,11 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Formulario = () => {
+const Formulario = ({guardarBusquedaLetra}) => {
+  // States
+  const [busqueda, guardarBusqueda] = useState({
+    artista: "",
+    cancion: "",
+  });
+
+  const [error, guardarError] = useState(false);
+
+  const { artista, cancion } = busqueda;
+
+  // funciona para actualizar state con los datos de los inputs
+  const handleOnChange = (e) => {
+    guardarBusqueda({
+      ...busqueda,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Consultar Apis
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (cancion.trim() === "" || artista.trim() === "") {
+      guardarError(true);
+      return;
+    }
+
+    guardarBusquedaLetra(busqueda);
+  };
+
   return (
     <div className="bg-info">
+      {error ? <p className="alert alert-danger text-center p-2">Todos los campos son obligatorios</p> : null}
       <div className="container">
         <div className="row">
-          <form className=" col card text-white bg-transparent mb-5 pt-5 pb-2">
+          <form
+            onSubmit={handleSubmit}
+            className=" col card text-white bg-transparent mb-5 pt-5 pb-2"
+          >
             <fieldset>
               <legend className="text-center">Buscador Letras Canciones</legend>
 
@@ -18,6 +52,8 @@ const Formulario = () => {
                       className="form-control"
                       name="artista"
                       placeholder="Nombre Artista"
+                      onChange={handleOnChange}
+                      value={artista}
                     />
                   </div>
                 </div>
@@ -29,15 +65,16 @@ const Formulario = () => {
                       className="form-control"
                       name="cancion"
                       placeholder="Nombre Canción"
+                      onChange={handleOnChange}
+                      value={cancion}
                     />
                   </div>
                 </div>
               </div>
 
-              <button
-              type="submit"
-              className="btn btn-primary float-right"
-              >Buscar</button>
+              <button type="submit" className="btn btn-primary float-right">
+                Buscar
+              </button>
             </fieldset>
           </form>
         </div>

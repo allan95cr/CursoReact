@@ -20,6 +20,10 @@ const Formulario = () => {
   };
 
   const handleSubmit = (e) => {
+    if (busqueda.nombre.trim() === '' || busqueda.categoria.trim() === '') {
+      return;
+    }
+
     e.preventDefault();
     buscarRecetas(busqueda);
     guardarConsultar(true);

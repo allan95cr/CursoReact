@@ -1,9 +1,21 @@
-import React from 'react';
+import React from "react";
+import SideBar from "../layout/Sidebar";
 
 const Proyectos = () => {
-    return ( 
-        <h1>Desde Pryectos</h1>
-     );
-}
- 
+  return (
+    <div className="contenedor-app">
+      
+      <SideBar/>
+
+      <div className="seccion-principal">
+        <main>
+            <div className="contenedor-tareas">
+
+            </div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
 export default Proyectos;

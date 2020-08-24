@@ -9,9 +9,16 @@ const app = express();
 // Conectar a la base de datos
 connectDB();
 
+// Habilitar express.json
+app.use(express.json({ extended: true}));
+
 // Usamos el puerto del archivo env o por defecto el 4000
 // puerto del app
 const PORT = process.env.PORT || 4000;
+
+// Importar rutas
+app.use('/api/users', require('./routes/usersroute'));
+
 
 // Iniciar el servidor
 app.listen(PORT, () => {

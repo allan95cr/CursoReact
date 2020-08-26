@@ -48,10 +48,9 @@ exports.CreateUser = async (req, resp) => {
         } else {
             resp.json({token: token})
         }
-
-    })
+          })
   } catch (error) {
     console.log(error);
-    resp.status(400).send("Hubo un error");
+    resp.status(400).send({ msg: "Hubo un error" });
   }
 };

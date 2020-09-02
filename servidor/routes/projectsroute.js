@@ -22,4 +22,11 @@ router.put(
   projectController.UpdateProject
 );
 
+// Eliminar un proyecto
+router.delete(
+  "/:id",
+  auth,
+  projectController.DeleteProject
+);
+
 module.exports = router;

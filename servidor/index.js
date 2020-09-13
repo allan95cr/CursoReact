@@ -2,12 +2,17 @@
 const express = require('express');
 // Importamos la conexion de la bd del archivo Config/db.js
 const connectDB = require('./config/db');
+// Importar cors
+const cors = require('cors')
 
 // Creamos el servidor
 const app = express();
 
 // Conectar a la base de datos
 connectDB();
+
+// Habilitar Cors
+app.use(cors());
 
 // Habilitar express.json
 app.use(express.json({ extended: true}));

@@ -13,7 +13,6 @@ exports.CreateUser = async (req, resp) => {
 
     // Extraer email y password
     const { email, password } = req.body;
-
     // Validar que el usuario sea unico
     let user = await User.findOne({ email });
 
@@ -26,6 +25,7 @@ exports.CreateUser = async (req, resp) => {
 
     // Hashear el password
     const salt = await bcryptjs.genSalt(10);
+    console.log(`${salt} ${password}`)
     user.password = await bcryptjs.hash(password, salt);
 
     // Guardar usuario

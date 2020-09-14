@@ -56,6 +56,17 @@ exports.AuthUser = async (req, resp) => {
     );
   } catch (error) {
     console.log(error);
-    resp.status(400).send({ msg: "Hubo un error" });
+    resp.status(500).send({ msg: "Hubo un error" });
   }
 };
+
+// Obtiene el usuario autenticado
+exports.GetAuthUser = async (req,resp) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    resp.json({user});
+  } catch (error) {
+    console.log(error);
+    resp.status(500).send({ msg: "Hubo un error" });
+  }
+}

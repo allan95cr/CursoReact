@@ -2,6 +2,7 @@ import React,{useReducer} from 'react';
 import AuthContext from './authContext';
 import AuthReducer from './authReducer';
 import clienteAxios from '../../config/axios'
+import tokenAuth from '../../config/tokenAuth';
 import { 
     REGISTRO_EXITOSO,
     REGISTRO_ERROR,
@@ -32,6 +33,8 @@ import {
                 type: REGISTRO_EXITOSO,
                 payload: respuesta.data
             })
+
+            UsuarioAutenticado();
         } catch (error) {
             //console.log(error.response.data.msg);
             const alerta = {
@@ -44,6 +47,30 @@ import {
             })
         }
     };
+
+    // Retorna el usuario autenticado
+    const UsuarioAutenticado = async () =>{
+        const token = localStorage.getItem('token')
+
+        if(token){
+        tokenAuth(token);
+        }
+
+            // TODO: Funciona para enviar el token por headers
+            try {
+                const respuesta = await clienteAxios.get('/api/auth')
+                dispatch({
+                    type: OBTENER_USUARIO,
+                    payload: respuesta.data.user
+                })
+            } catch (error) {
+                console.log(error.response);
+                dispatch({
+                    type: LOGIN_ERROR
+                })
+            }
+        
+    }
 
 
     return (

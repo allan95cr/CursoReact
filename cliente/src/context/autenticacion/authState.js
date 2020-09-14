@@ -26,15 +26,21 @@ import {
     // Registrar usuario
     const RegistrarUsuario = async datos => {
         try {
-            const respuesta = await clienteAxios.post('/api/users',datos);
+            const respuesta = await clienteAxios.post('/api/users',datos);            
             console.log(respuesta.data);
             dispatch({
-                type: REGISTRO_EXITOSO
+                type: REGISTRO_EXITOSO,
+                payload: respuesta.data
             })
         } catch (error) {
-            console.log(error);
+            //console.log(error.response.data.msg);
+            const alerta = {
+                msg: error.response.data.msg,
+                categoria: 'alerta-error'
+            }
             dispatch({
-                type: REGISTRO_ERROR
+                type: REGISTRO_ERROR,
+                payload: alerta
             })
         }
     };

@@ -1,90 +1,114 @@
-import React,{useReducer} from 'react';
-import AuthContext from './authContext';
-import AuthReducer from './authReducer';
-import clienteAxios from '../../config/axios'
-import tokenAuth from '../../config/tokenAuth';
-import { 
-    REGISTRO_EXITOSO,
-    REGISTRO_ERROR,
-    OBTENER_USUARIO,
-    LOGIN_EXITOSO,
-    LOGIN_ERROR,
-    CERRAR_SESIONS
- } from "../../types";
+import React, { useReducer } from "react";
+import AuthContext from "./authContext";
+import AuthReducer from "./authReducer";
+import clienteAxios from "../../config/axios";
+import tokenAuth from "../../config/tokenAuth";
+import {
+  REGISTRO_EXITOSO,
+  REGISTRO_ERROR,
+  OBTENER_USUARIO,
+  LOGIN_EXITOSO,
+  LOGIN_ERROR,
+  CERRAR_SESIONS,
+} from "../../types";
 
+const AuthState = (props) => {
+  const initialState = {
+    token: localStorage.getItem("token"),
+    autenticado: null,
+    usuario: null,
+    mensaje: null,
+  };
 
- const AuthState = props => {
+  const [state, dispatch] = useReducer(AuthReducer, initialState);
 
-    const initialState = {
-        token: localStorage.getItem('token'),
-        autenticado: null,
-        usuario: null,
-        mensaje:null
+  // Registrar usuario
+  const RegistrarUsuario = async (datos) => {
+    try {
+      const respuesta = await clienteAxios.post("/api/users", datos);
+      console.log(respuesta.data);
+      dispatch({
+        type: REGISTRO_EXITOSO,
+        payload: respuesta.data,
+      });
+
+      UsuarioAutenticado();
+    } catch (error) {
+      //console.log(error.response.data.msg);
+      const alerta = {
+        msg: error.response.data.msg,
+        categoria: "alerta-error",
+      };
+      dispatch({
+        type: REGISTRO_ERROR,
+        payload: alerta,
+      });
     }
+  };
 
-    const [state,dispatch] = useReducer(AuthReducer,initialState);
+  // Retorna el usuario autenticado
+  const UsuarioAutenticado = async () => {
+    const token = localStorage.getItem("token");
 
-    // Registrar usuario
-    const RegistrarUsuario = async datos => {
-        try {
-            const respuesta = await clienteAxios.post('/api/users',datos);            
-            console.log(respuesta.data);
-            dispatch({
-                type: REGISTRO_EXITOSO,
-                payload: respuesta.data
-            })
-
-            UsuarioAutenticado();
-        } catch (error) {
-            //console.log(error.response.data.msg);
-            const alerta = {
-                msg: error.response.data.msg,
-                categoria: 'alerta-error'
-            }
-            dispatch({
-                type: REGISTRO_ERROR,
-                payload: alerta
-            })
-        }
-    };
-
-    // Retorna el usuario autenticado
-    const UsuarioAutenticado = async () =>{
-        const token = localStorage.getItem('token')
-
-        if(token){
-        tokenAuth(token);
-        }
-
-            // TODO: Funciona para enviar el token por headers
-            try {
-                const respuesta = await clienteAxios.get('/api/auth')
-                dispatch({
-                    type: OBTENER_USUARIO,
-                    payload: respuesta.data.user
-                })
-            } catch (error) {
-                console.log(error.response);
-                dispatch({
-                    type: LOGIN_ERROR
-                })
-            }
-        
+    if (token) {
+      tokenAuth(token);
     }
+    try {
+      const respuesta = await clienteAxios.get("/api/auth");
+      dispatch({
+        type: OBTENER_USUARIO,
+        payload: respuesta.data.user,
+      });
+    } catch (error) {
+      const alerta = {
+        msg: error.response.data.msg,
+        categoria: "alerta-error"
+      };
+      dispatch({
+        type: LOGIN_ERROR,
+        payload: alerta
+      });
+    }
+  };
 
+  // Iniciar Sesion
+  const IniciarSesion = async (datos) => {
+    try {
+        const respuesta = await clienteAxios.post('/api/auth',datos);
+        dispatch({
+            type:LOGIN_EXITOSO,
+            payload: respuesta.data
+        })
+        UsuarioAutenticado();
+    } 
+    catch (error) {
+        console.log(error.response);
+        const alerta = {
+            msg: error.response.data.msg,
+            categoria: "alerta-error"
+          };
+          dispatch({
+            type: LOGIN_ERROR,
+            payload: alerta
+          });
+    }
+  };
 
-    return (
-        <AuthContext.Provider
-        value={{
-            token: state.token,
-            autenticado: state.autenticado,
-            usuario: state.usuario,
-            mensaje: state.mensaje,
-            RegistrarUsuario
-        }}>
-            {props.children}
-        </AuthContext.Provider>
-    )
- }
+  return (
+    <AuthContext.Provider
+      value={{
+        token: state.token,
+        autenticado: state.autenticado,
+        usuario: state.usuario,
+        mensaje: state.mensaje,
+        RegistrarUsuario,
+        IniciarSesion,
+        UsuarioAutenticado
+      }}
+    >
+      {props.children}
+    </AuthContext.Provider>
+  );
+};
 
- export default AuthState;
+export default AuthState;

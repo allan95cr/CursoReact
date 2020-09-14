@@ -1,11 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
+import AlertaContext from "../../context/alertas/alertaContext";
+import AuthContext from '../../context/autenticacion/authContext';
 
-const Login = () => {
+const Login = (props) => {
+
+    // Extraer los valores del context
+    const alertaContext = useContext(AlertaContext);
+    const { alerta, mostrarAlerta } = alertaContext;
+  
+    const authContext = useContext(AuthContext);
+    const { mensaje,autenticado,IniciarSesion} = authContext;
+
+    // En caso de que los datos sean incorrectos
+    useEffect(()=>{
+      if(autenticado){
+        props.history.push('/proyectos');
+      }
+      if(mensaje){
+        mostrarAlerta(mensaje.msg, mensaje.categoria);
+      }
+  
+    },[mensaje,autenticado, props.history]);
+
   // State del Login
   const [usuario, GuardarUsuario] = useState({
     email: "",
-    password: "",
+    password: ""
   });
 
   const { email, password } = usuario;
@@ -13,7 +34,7 @@ const Login = () => {
   const onChange = (e) => {
     GuardarUsuario({
       ...usuario,
-      [e.target.name]: [e.target.value],
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -21,12 +42,20 @@ const Login = () => {
     e.preventDefault();
 
     // Validar Datos
+    if(email.trim() ==='' || password.trim() ===''){
+      mostrarAlerta('Todos los campos son obligatorios','alerta-error')
+      return;
+    }
 
     // Pasar al action
+    IniciarSesion ({email, password});
   };
 
   return (
     <div className="form-usuario">
+            {alerta ? (
+        <div className={`alerta ${alerta.categoria}`}>{alerta.msg}</div>
+      ) : null}
       <div className="contenedor-form sombra-dark">
         <h1>Iniciar Sesión</h1>
 

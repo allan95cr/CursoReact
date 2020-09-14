@@ -6,7 +6,6 @@ import AuthContext from '../../context/autenticacion/authContext';
 const NuevaCuenta = (props) => {
   // Extraer los valores del context
   const alertaContext = useContext(AlertaContext);
-
   const { alerta, mostrarAlerta } = alertaContext;
 
   const authContext = useContext(AuthContext);

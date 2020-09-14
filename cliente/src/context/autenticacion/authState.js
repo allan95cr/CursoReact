@@ -9,7 +9,7 @@ import {
   OBTENER_USUARIO,
   LOGIN_EXITOSO,
   LOGIN_ERROR,
-  CERRAR_SESIONS,
+  CERRAR_SESION
 } from "../../types";
 
 const AuthState = (props) => {
@@ -94,6 +94,13 @@ const AuthState = (props) => {
     }
   };
 
+  // Cierra la sesion del usuario
+  const CerrarSesion = () => {
+    dispatch({
+      type: CERRAR_SESION
+    });
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -103,7 +110,8 @@ const AuthState = (props) => {
         mensaje: state.mensaje,
         RegistrarUsuario,
         IniciarSesion,
-        UsuarioAutenticado
+        UsuarioAutenticado,
+        CerrarSesion
       }}
     >
       {props.children}

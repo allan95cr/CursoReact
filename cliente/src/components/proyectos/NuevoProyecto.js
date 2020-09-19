@@ -21,7 +21,7 @@ const NuevoProyecto = () => {
   const onChangeProyecto = (e) => {
     GuardarProyecto({
       ...proyecto,
-      [e.target.name]: [e.target.value],
+      [e.target.name]: e.target.value,
     });
   };
 
